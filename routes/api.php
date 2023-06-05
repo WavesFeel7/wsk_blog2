@@ -42,7 +42,13 @@ Route::group(
     function () {
         Route::group(['middleware' => 'jwt.auth'], function () {
 
+            Route::get('index', 'PostController@index');
             Route::post('createPost', 'PostController@store');
+            Route::put('updatePost/{id}', 'PostController@update');
+            Route::delete('deletePost/{id}', 'PostController@destroy');
+            Route::post('createComment/{id}', 'CommentController@store');
+            Route::post('likes/{id}', 'LikeController@store');
+            Route::get('countLikes/{id}', 'LikeController@countLikes');
         });
     }
 );

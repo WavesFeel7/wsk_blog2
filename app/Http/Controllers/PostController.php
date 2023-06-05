@@ -14,7 +14,6 @@ class PostController extends Controller
         try {
             $title = request('title');
             $description = request('description');
-            $description = request('img');
             $user = Auth::user();
 
             // Проверяем, есть ли загруженное изображение
@@ -52,7 +51,8 @@ class PostController extends Controller
         if (auth()->user()->id !== $post->author) {
             return response()->json([
                 'status' => 'forbidden',
-                'message' => 'Вы не являетесь автором поста'
+                'message' => 'Вы не являетесь автором поста',
+                auth()->user()->id
             ]);
         }
         $post = Post::findOrFail($id);
@@ -73,5 +73,27 @@ class PostController extends Controller
 
         $post->save();
         return response()->json(['status' => 'success']);
+        // return response()->json(auth()->user()->id);
+    }
+
+    public function destroy(Request $request, $id)
+    {
+        $post = Post::find($id);
+        if (auth()->user()->id !== $post->author) {
+            return response()->json([
+                'status' => 'forbidden',
+                'message' => 'Вы не являетесь автором поста',
+                auth()->user()->id
+            ]);
+        }
+
+        $post = Post::findOrFail($id);
+        $post->delete();
+    }
+
+    public function index()
+    {
+        $post = Post::all();
+        return response()->json($post, 200);
     }
 }
